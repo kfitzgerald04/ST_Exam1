@@ -1,3 +1,11 @@
+/**
+ * For the EP & BVA testing, I grouped them based on which test cases would yield the same results.
+ * When I designed the test cases I set all booleans == false to focus solely on
+ * the EP or BV. I figured that in the end with DT testing, all the combinations would be tested, so 
+ * in order to limit the amount of duplicates tests, the booleans were false in EP and BVA testing. 
+ * I couldn't come up with a better way to test the DT so each rule has it's own function. 
+ */
+
 package com.fitzgerald;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,12 +39,14 @@ public class EnergyCalculatorTest {
         "250, false, false, 0.0",
         "500, false, false, 0.0",
 
-        // EP3 | BV7-BV10
+        // EP3 | BV7-BV10 
+        // DT testing should catch the other conditions 
         "501, false, false, 0.0",
         "1000, false, false, 0.0",
         "1500, false, false, 0.0",
 
         // EP4 | BV11-BV12
+        // DT testing should catch the other conditions 
         "1501, false, false, 0.05",
         "2500, false, false, 0.05"
        
@@ -56,49 +66,49 @@ public class EnergyCalculatorTest {
 
     // ---------------- DT (one test per rule) ------------------ //
 
-    // R1
+    // R1 (if kwh <= 0)
     @Test
     void invalidUsage() {
         assertThrows(IllegalArgumentException.class, () ->
     calculator.calculateRebate(-1, true, false));
     }
 
-    // R2
-    @Test
+    // R2 (if kwh > 500 && <= 1500 && both booleans are true)
+    @Test 
     void tierTwoSmartAndOptOut() {
         double rebate = calculator.calculateRebate(1000, true, true);
         assertEquals(0.15, rebate); 
     }
 
-    // R3
+    // R3 (if kwh > 500 && <= 1500 && both booleans are false)
     @Test
     void tierTwoNeither() {
         double rebate = calculator.calculateRebate(1000, false, false);
         assertEquals(0.0, rebate);
     }
 
-    // R4 
-    @Test
+    // R4 (if kwh > 1500 && both booleans are true)
+    @Test 
     void tierThreeSmartAndOptOut() {
         double rebate = calculator.calculateRebate(2500, true, true);
         assertEquals(0.20, rebate);
     }
 
-    // R5
+    // R5 (if kwh > 1500 && one boolean is true)
     @Test
     void tierThreeSmartOrOptOut() {
         double rebate = calculator.calculateRebate(2500, false, true);
         assertEquals(0.05, rebate);
     }
 
-    // R6
+    // R6 (if kwh > 0 && <= 500 && one boolean is true)
     @Test
     void tierOneSmart() {
         double rebate = calculator.calculateRebate(250, true, false);
         assertEquals(0.0, rebate); 
     }
 
-    // R7
+    // R7 (if kwh > 500 && <= 1500 && one boolean is true)
     @Test
     void tierTwoSmartOrOptOut() {
         double rebate = calculator.calculateRebate(1000, true, false);
